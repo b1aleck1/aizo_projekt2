@@ -1,0 +1,33 @@
+# Configuration File
+
+# Problem Selection: MST or SP
+Problem: MST
+
+# Graph Input
+LoadFromFile: "data/graph.txt" # Leave empty "" to generate a random graph
+# OR
+#LoadFromFile: ""
+
+# Random Graph Parameters (if LoadFromFile is empty)
+Vertices: 10
+Density: 0.5
+
+# Algorithms to Run (true/false)
+RunPrim: true
+RunKruskal: true
+RunDijkstra: false
+RunBellmanFord: false
+
+# Graph Representation (true/false for using the representation)
+UseMatrix: true
+UseList: true
+
+# Display Graph (true/false)
+DisplayGraph: true
+
+# Run Performance Tests (true/false)
+RunPerformanceTests: false
+
+# Shortest Path Parameters (if Problem is SP)
+Source: 0
+Destination: 5

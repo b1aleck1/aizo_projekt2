@@ -1,0 +1,22 @@
+#ifndef MATRIX_GRAPH_H
+#define MATRIX_GRAPH_H
+
+#include "Graph.h"
+
+class MatrixGraph : public Graph {
+private:
+    int** adjMatrix; // Dynamically allocated matrix
+
+public:
+    MatrixGraph(int vertices, bool isDirected = false);
+    ~MatrixGraph();
+
+    bool addEdge(int source, int destination, int weight) override;
+    bool removeEdge(int source, int destination) override;
+    bool hasEdge(int source, int destination) const override;
+    int getEdgeWeight(int source, int destination) const override;
+    void display() const override;
+    void clearGraph() override;
+};
+
+#endif // MATRIX_GRAPH_H
