@@ -2,21 +2,22 @@
 #include "../include/Timer.h"
 
 #include <iostream>
+#include <climits>
 
-// Structure to represent an edge
+// Struktura reprezentująca krawędź
 struct Edge {
     int src, dest, weight;
 };
 
-// Implementation of Bellman-Ford algorithm
+// Implementacja algorytmu Bellmana-Forda
 void bellmanFordSP(Graph* graph, int src, int dest) {
     int V = graph->getVertexCount();
     int E = graph->getEdgeCount();
 
-    // Create an array of all edges
+    // Tablica wszystkich krawędzi
     Edge* edges = new Edge[E];
 
-    // Collect all edges from the graph
+    // Zbieranie krawędzi z grafu
     int edgeIndex = 0;
     for (int i = 0; i < V; i++) {
         for (int j = 0; j < V; j++) {
@@ -29,40 +30,37 @@ void bellmanFordSP(Graph* graph, int src, int dest) {
         }
     }
 
-    // Distance array and parent array
     int* dist = new int[V];
     int* parent = new int[V];
 
-    // Initialize distances
+    // Inicjalizacja odległości i rodziców
     for (int i = 0; i < V; i++) {
         dist[i] = INT_MAX;
         parent[i] = -1;
     }
-
     dist[src] = 0;
 
-    // Relax all edges |V| - 1 times
+    // Relaksowanie krawędzi |V|-1 razy
     for (int i = 1; i < V; i++) {
         for (int j = 0; j < E; j++) {
             int u = edges[j].src;
             int v = edges[j].dest;
-            int weight = edges[j].weight;
+            int w = edges[j].weight;
 
-            if (dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
-                dist[v] = dist[u] + weight;
+            if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
                 parent[v] = u;
             }
         }
     }
 
-    // Check for negative-weight cycles
+    // Sprawdzenie cykli ujemnych
     bool hasNegativeCycle = false;
     for (int i = 0; i < E; i++) {
         int u = edges[i].src;
         int v = edges[i].dest;
-        int weight = edges[i].weight;
-
-        if (dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
+        int w = edges[i].weight;
+        if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
             hasNegativeCycle = true;
             break;
         }
@@ -76,12 +74,10 @@ void bellmanFordSP(Graph* graph, int src, int dest) {
         std::cout << "Bellman-Ford Shortest Path from " << src << " to " << dest << ":\n";
         std::cout << "Total Distance: " << dist[dest] << std::endl;
 
-        // Print the path
-        std::cout << "Path: ";
+        // Odtwarzanie ścieżki
         int* path = new int[V];
         int pathLen = 0;
         int current = dest;
-
         while (current != -1) {
             path[pathLen++] = current;
             current = parent[current];
@@ -101,13 +97,11 @@ void bellmanFordSP(Graph* graph, int src, int dest) {
     delete[] edges;
 }
 
-// Function to run Bellman-Ford algorithm with time measurement
+// Funkcja wywoływana w main.cpp z pomiarem czasu
 double runBellmanFordSP(Graph* graph, int src, int dest) {
     Timer timer;
-
     timer.startTimer();
     bellmanFordSP(graph, src, dest);
     timer.stopTimer();
-
     return timer.getElapsedMilliseconds();
 }

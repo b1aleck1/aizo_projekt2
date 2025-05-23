@@ -2,9 +2,9 @@
 #include "../include/Timer.h"
 
 #include <iostream>
+#include <climits>
 
-
-// Simple implementation of disjoint-set for Kruskal's algorithm
+// Prosty zbiór rozłączny (disjoint set) do Kruskala
 class DisjointSet {
 private:
     int* parent;
@@ -16,10 +16,9 @@ public:
         this->n = n;
         parent = new int[n];
         rank = new int[n];
-
         for (int i = 0; i < n; i++) {
-            parent[i] = i;  // Each vertex is its own parent initially
-            rank[i] = 0;    // Initial rank is 0
+            parent[i] = i;
+            rank[i] = 0;
         }
     }
 
@@ -28,22 +27,18 @@ public:
         delete[] rank;
     }
 
-    // Find the representative (root) of the set that contains x
     int find(int x) {
         if (parent[x] != x) {
-            parent[x] = find(parent[x]); // Path compression
+            parent[x] = find(parent[x]);
         }
         return parent[x];
     }
 
-    // Merge two sets
     void unionSets(int x, int y) {
         int rootX = find(x);
         int rootY = find(y);
-
         if (rootX == rootY) return;
 
-        // Union by rank
         if (rank[rootX] < rank[rootY]) {
             parent[rootX] = rootY;
         } else if (rank[rootX] > rank[rootY]) {
@@ -55,25 +50,52 @@ public:
     }
 };
 
-// Structure to represent an edge
+// Struktura reprezentująca krawędź
 struct Edge {
     int src, dest, weight;
-
-    // For sorting edges
-    bool operator<(const Edge& other) const {
-        return weight < other.weight;
-    }
 };
 
-// Implementation of Kruskal's algorithm for MST
+// Zamiana dwóch krawędzi
+void swapEdges(Edge& a, Edge& b) {
+    Edge temp = a;
+    a = b;
+    b = temp;
+}
+
+// Funkcja podziału dla QuickSort
+int partition(Edge* edges, int low, int high) {
+    int pivot = edges[high].weight;
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (edges[j].weight <= pivot) {
+            i++;
+            swapEdges(edges[i], edges[j]);
+        }
+    }
+    swapEdges(edges[i + 1], edges[high]);
+    return i + 1;
+}
+
+// Rekurencyjny QuickSort
+void quickSortEdges(Edge* edges, int low, int high) {
+    if (low < high) {
+        int pi = partition(edges, low, high);
+        quickSortEdges(edges, low, pi - 1);
+        quickSortEdges(edges, pi + 1, high);
+    }
+}
+
+// Właściwa implementacja algorytmu Kruskala
 void kruskalMST(Graph* graph) {
     int V = graph->getVertexCount();
-    Edge* edges = new Edge[graph->getEdgeCount()];
+    int E = graph->getEdgeCount();
+    Edge* edges = new Edge[E];
 
-    // Collect all edges from the graph
+    // Pobierz wszystkie krawędzie z grafu (tylko górny trójkąt dla nieskierowanego)
     int edgeIndex = 0;
     for (int i = 0; i < V; i++) {
-        for (int j = i + 1; j < V; j++) { // For undirected graph, only consider upper triangle
+        for (int j = i + 1; j < V; j++) {
             if (graph->hasEdge(i, j)) {
                 edges[edgeIndex].src = i;
                 edges[edgeIndex].dest = j;
@@ -83,45 +105,33 @@ void kruskalMST(Graph* graph) {
         }
     }
 
-    // Sort all edges in non-decreasing order of their weight
-    for (int i = 0; i < edgeIndex - 1; i++) {
-        for (int j = 0; j < edgeIndex - i - 1; j++) {
-            if (edges[j].weight > edges[j+1].weight) {
-                Edge temp = edges[j];
-                edges[j] = edges[j+1];
-                edges[j+1] = temp;
-            }
-        }
-    }
+    // Sortowanie krawędzi według wagi QuickSortem
+    quickSortEdges(edges, 0, edgeIndex - 1);
 
-    // Allocate memory for MST
-    Edge* mst = new Edge[V-1];
-
+    Edge* mst = new Edge[V - 1];
     DisjointSet ds(V);
     int mstEdgeCount = 0;
     int i = 0;
 
-    // Process edges one by one
+    // Budowanie MST
     while (mstEdgeCount < V - 1 && i < edgeIndex) {
         Edge next_edge = edges[i++];
-
         int x = ds.find(next_edge.src);
         int y = ds.find(next_edge.dest);
 
-        // If including this edge doesn't cause a cycle, add it to MST
         if (x != y) {
             mst[mstEdgeCount++] = next_edge;
             ds.unionSets(x, y);
         }
     }
 
-    // Print the MST
+    // Wypisanie MST
     std::cout << "Kruskal's MST:\n";
     int totalWeight = 0;
-    for (i = 0; i < mstEdgeCount; i++) {
-        std::cout << "Edge: " << mst[i].src << " - " << mst[i].dest
-                  << ", Weight: " << mst[i].weight << std::endl;
-        totalWeight += mst[i].weight;
+    for (int k = 0; k < mstEdgeCount; k++) {
+        std::cout << "Edge: " << mst[k].src << " - " << mst[k].dest
+                  << ", Weight: " << mst[k].weight << "\n";
+        totalWeight += mst[k].weight;
     }
     std::cout << "Total MST Weight: " << totalWeight << std::endl;
 
@@ -129,7 +139,7 @@ void kruskalMST(Graph* graph) {
     delete[] mst;
 }
 
-// Function to run Kruskal's algorithm with time measurement
+// Funkcja do pomiaru czasu działania Kruskala
 double runKruskalMST(Graph* graph) {
     Timer timer;
 

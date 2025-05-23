@@ -3,6 +3,9 @@ project(projekt2)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include_directories(include)
+target_include_directories(projekt2 PRIVATE include)
+
 add_executable(projekt2
         src/main.cpp
         src/Application.cpp
@@ -16,5 +19,6 @@ add_executable(projekt2
         src/MatrixGraph.cpp
         src/Prim.cpp
         src/Timer.cpp
+        src/MinHeap.cpp
+        src/AlgorithmsRunner.cpp
 )
-
