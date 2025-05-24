@@ -7,40 +7,40 @@
 
 double runPrimMST(Graph* graph) {
     Timer timer;
-    timer.start();
+    timer.startTimer();
     Prim prim;
     prim.run(graph);
-    timer.stop();
+    timer.stopTimer();
     prim.displayResult();
-    return timer.elapsedMilliseconds();
+    return timer.getElapsedMilliseconds();
 }
 
 double runKruskalMST(Graph* graph) {
     Timer timer;
-    timer.start();
+    timer.startTimer();
     Kruskal kruskal;
     kruskal.run(graph);
-    timer.stop();
+    timer.stopTimer();
     kruskal.displayResult();
-    return timer.elapsedMilliseconds();
+    return timer.getElapsedMilliseconds();
 }
 
 double runDijkstraSP(Graph* graph, int src, int dest) {
     Timer timer;
-    timer.start();
+    timer.startTimer();
     Dijkstra dijkstra;
     dijkstra.run(graph, src, dest);
-    timer.stop();
+    timer.stopTimer();
     dijkstra.displayResult();
-    return timer.elapsedMilliseconds();
+    return timer.getElapsedMilliseconds();
 }
 
 double runBellmanFordSP(Graph* graph, int src, int dest) {
     Timer timer;
-    timer.start();
+    timer.startTimer();
     BellmanFord bf;
     bf.run(graph, src, dest);
-    timer.stop();
+    timer.stopTimer();
     bf.displayResult();
-    return timer.elapsedMilliseconds();
+    return timer.getElapsedMilliseconds();
 }

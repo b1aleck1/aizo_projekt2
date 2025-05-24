@@ -1,4 +1,4 @@
-#include "../include/Timer.h"
+#include "Timer.h"
 
 Timer::Timer() : running(false) {
     QueryPerformanceFrequency(&frequency);

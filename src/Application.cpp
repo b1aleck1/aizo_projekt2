@@ -1,5 +1,7 @@
+#include "AlgorithmsRunner.h"
 #include "../include/Application.h"
 #include <iostream>
+
 
 Application::Application()
     : matrixGraph(nullptr), listGraph(nullptr) {
