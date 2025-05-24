@@ -4,17 +4,15 @@
 #include <windows.h>
 
 class Timer {
-private:
-    LARGE_INTEGER start;
-    LARGE_INTEGER end;
-    LARGE_INTEGER frequency;
-    bool running;
-
 public:
-    Timer();
-    void startTimer();
-    void stopTimer();
-    double getElapsedMilliseconds() const;
+    void start();
+    void stop();
+    double getElapsedTime() const;
+
+private:
+    LARGE_INTEGER startTime;
+    LARGE_INTEGER endTime;
+    LARGE_INTEGER frequency;
 };
 
 #endif // TIMER_H

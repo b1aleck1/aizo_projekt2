@@ -1,25 +1,14 @@
-#include "Timer.h"
+#include "../include/Timer.h"
 
-Timer::Timer() : running(false) {
+void Timer::start() {
     QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&startTime);
 }
 
-void Timer::startTimer() {
-    running = true;
-    QueryPerformanceCounter(&start);
+void Timer::stop() {
+    QueryPerformanceCounter(&endTime);
 }
 
-void Timer::stopTimer() {
-    QueryPerformanceCounter(&end);
-    running = false;
-}
-
-double Timer::getElapsedMilliseconds() const {
-    if (running) {
-        LARGE_INTEGER current;
-        QueryPerformanceCounter(&current);
-        return (current.QuadPart - start.QuadPart) * 1000.0 / frequency.QuadPart;
-    }
-
-    return (end.QuadPart - start.QuadPart) * 1000.0 / frequency.QuadPart;
+double Timer::getElapsedTime() const {
+    return static_cast<double>(endTime.QuadPart - startTime.QuadPart) / frequency.QuadPart;
 }

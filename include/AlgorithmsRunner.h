@@ -1,11 +1,11 @@
-#ifndef ALGORITHMSRUNNER_H
-#define ALGORITHMSRUNNER_H
+#ifndef ALGORITHMS_RUNNER_H
+#define ALGORITHMS_RUNNER_H
 
 #include "Graph.h"
 
 double runPrimMST(Graph* graph);
 double runKruskalMST(Graph* graph);
-double runDijkstraSP(Graph* graph, int src, int dest);
-double runBellmanFordSP(Graph* graph, int src, int dest);
+double runDijkstraSP(Graph* graph, int source, int destination);
+double runBellmanFordSP(Graph* graph, int source, int destination);
 
-#endif // ALGORITHMSRUNNER_H
+#endif // ALGORITHMS_RUNNER_H
