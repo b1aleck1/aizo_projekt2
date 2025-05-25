@@ -4,7 +4,7 @@
 Problem: MST
 
 # Graph Input
-LoadFromFile: "graph.txt" # Leave empty "" to generate a random graph
+LoadFromFile: "data/graph.txt" # Leave empty "" to generate a random graph
 # OR
 #LoadFromFile: ""
 

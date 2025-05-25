@@ -14,7 +14,7 @@ Application::~Application() {
 
 void Application::run() {
     // 1. Wczytaj konfigurację
-    if (!config.loadConfigFromFile("graph.txt")) {
+    if (!config.loadConfigFromFile("config.txt")) {
         std::cerr << "Error loading configuration file. Using default values.\n";
     }
 
