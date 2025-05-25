@@ -60,7 +60,7 @@ bool loadGraphFromFile(const std::string& filename, Graph* matrixGraph, Graph* l
 int main() {
     // Load configuration
     Config config;
-    if (!config.loadConfigFromFile("config.txt")) {
+    if (!config.loadConfigFromFile("graph.txt")) {
         std::cerr << "Error loading configuration file. Using default values.\n";
     }
 

@@ -1,14 +1,14 @@
 #include "../include/Timer.h"
 
 void Timer::start() {
-    QueryPerformanceFrequency(&frequency);
-    QueryPerformanceCounter(&startTime);
+    startTime = std::chrono::high_resolution_clock::now();
 }
 
 void Timer::stop() {
-    QueryPerformanceCounter(&endTime);
+    endTime = std::chrono::high_resolution_clock::now();
 }
 
 double Timer::getElapsedTime() const {
-    return static_cast<double>(endTime.QuadPart - startTime.QuadPart) / frequency.QuadPart;
+    std::chrono::duration<double, std::milli> elapsed = endTime - startTime;
+    return elapsed.count();
 }

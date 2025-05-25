@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <filesystem> // C++17
 
 Config::Config()
     : problemType(MST),
@@ -22,6 +23,13 @@ Config::Config()
 
 bool Config::loadConfigFromFile(const std::string& filename) {
     std::ifstream file(filename);
+
+    // Jeśli plik nie został otwarty, próbuj znaleźć go np. w katalogu "data/"
+    if (!file.is_open()) {
+        std::filesystem::path altPath = std::filesystem::current_path() / "data" / filename;
+        file.open(altPath);
+    }
+
     if (!file.is_open()) {
         std::cerr << "Error opening config file: " << filename << std::endl;
         return false;
@@ -29,7 +37,6 @@ bool Config::loadConfigFromFile(const std::string& filename) {
 
     std::string line;
     while (std::getline(file, line)) {
-        // Skip comments and empty lines
         if (line.empty() || line[0] == '#') continue;
 
         size_t colonPos = line.find(':');
@@ -38,22 +45,18 @@ bool Config::loadConfigFromFile(const std::string& filename) {
         std::string key = line.substr(0, colonPos);
         std::string value = line.substr(colonPos + 1);
 
-        // Trim whitespace
         auto trim = [](std::string& s) {
             s.erase(0, s.find_first_not_of(" \t"));
             s.erase(s.find_last_not_of(" \t") + 1);
         };
-
         trim(key);
         trim(value);
 
-        // Configuration options
         if (key == "Problem") {
             if (value == "MST") problemType = MST;
             else if (value == "SP") problemType = SP;
         } else if (key == "LoadFromFile") {
-            // Remove quotes if present
-            if (value.length() > 2 && value[0] == '\"' && value[value.length() - 1] == '\"') {
+            if (value.length() > 2 && value[0] == '"' && value.back() == '"') {
                 inputFile = value.substr(1, value.length() - 2);
             } else {
                 inputFile = value;
