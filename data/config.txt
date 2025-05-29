@@ -4,9 +4,9 @@
 Problem: MST
 
 # Graph Input
-LoadFromFile: "data/graph.txt" # Leave empty "" to generate a random graph
+LoadFromFile: "graph.txt" # Leave empty "" to generate a random graph
 # OR
-#LoadFromFile: ""
+#LoadFromFile: "graph.txt"
 
 # Random Graph Parameters (if LoadFromFile is empty)
 Vertices: 10

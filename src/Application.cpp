@@ -1,81 +1,127 @@
-#include "AlgorithmsRunner.h"
 #include "../include/Application.h"
+#include "../include/Timer.h"
 #include <iostream>
+#include <fstream>
 
+// External algorithm implementations
+extern double runPrimMST(Graph* graph);
+extern double runKruskalMST(Graph* graph);
+extern double runDijkstraSP(Graph* graph, int src, int dest);
+extern double runBellmanFordSP(Graph* graph, int src, int dest);
+extern void generateConnectedGraph(Graph* graph, int vertices, double density);
 
 Application::Application()
-    : matrixGraph(nullptr), listGraph(nullptr) {
-}
+    : matrixGraph(nullptr), listGraph(nullptr) {}
 
 Application::~Application() {
-    if (matrixGraph) delete matrixGraph;
-    if (listGraph) delete listGraph;
+    delete matrixGraph;
+    delete listGraph;
 }
 
 void Application::run() {
-    // 1. Wczytaj konfigurację
-    if (!config.loadConfigFromFile("config.txt")) {
+    if (!config.loadConfigFromFile("../data/config.txt")) {
         std::cerr << "Error loading configuration file. Using default values.\n";
     }
 
-    int vertices = config.getVertexCount();
-
-    // 2. Utwórz grafy
-    if (config.isUseMatrixRepresentation()) {
-        matrixGraph = new MatrixGraph(vertices, config.getProblemType() == SP);
-    }
-    if (config.isUseListRepresentation()) {
-        listGraph = new ListGraph(vertices, config.getProblemType() == SP);
-    }
-
-    // 3. Wczytaj graf z pliku lub wygeneruj losowy
     if (!config.getInputFile().empty()) {
-        if (!loadGraphFromFile(config.getInputFile().c_str())) {
-            std::cerr << "Failed to load graph from file. Exiting.\n";
+        if (!loadGraphFromFile(config.getInputFile())) {
+            std::cerr << "Failed to load graph from file.\n";
             return;
         }
     } else {
-        if (!generateRandomGraph(vertices, config.getDensity())) {
-            std::cerr << "Failed to generate random graph. Exiting.\n";
-            return;
-        }
+        generateGraph();
     }
 
-    // 4. Wyświetl graf, jeśli wymaga konfiguracja
     if (config.isShowGraph()) {
-        if (matrixGraph) {
-            std::cout << "Matrix Representation:\n";
-            matrixGraph->display();
-        }
-        if (listGraph) {
-            std::cout << "List Representation:\n";
-            listGraph->display();
-        }
+        displayGraphs();
     }
 
-    // 5. Uruchom algorytmy na podstawie konfiguracji
+    runAlgorithms();
+
+    if (config.isRunPerformanceTests()) {
+        std::cout << "\n=== Performance Tests ===\n";
+        // Add performance test implementation here
+    }
+}
+
+bool Application::loadGraphFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) return false;
+
+    int numEdges, numVertices;
+    file >> numEdges >> numVertices;
+
+    if (config.isUseMatrixRepresentation()) {
+        delete matrixGraph;
+        matrixGraph = new MatrixGraph(numVertices, config.getProblemType() == SP);
+    }
+    if (config.isUseListRepresentation()) {
+        delete listGraph;
+        listGraph = new ListGraph(numVertices, config.getProblemType() == SP);
+    }
+
+    for (int i = 0; i < numEdges; ++i) {
+        int src, dest, weight;
+        file >> src >> dest >> weight;
+        if (matrixGraph) matrixGraph->addEdge(src, dest, weight);
+        if (listGraph) listGraph->addEdge(src, dest, weight);
+    }
+
+    file.close();
+    return true;
+}
+
+void Application::generateGraph() {
+    int v = config.getVertexCount();
+    double d = config.getDensity();
+
+    if (config.isUseMatrixRepresentation()) {
+        delete matrixGraph;
+        matrixGraph = new MatrixGraph(v, config.getProblemType() == SP);
+        generateConnectedGraph(matrixGraph, v, d);
+    }
+
+    if (config.isUseListRepresentation()) {
+        delete listGraph;
+        listGraph = new ListGraph(v, config.getProblemType() == SP);
+        generateConnectedGraph(listGraph, v, d);
+    }
+}
+
+void Application::displayGraphs() {
+    if (matrixGraph) {
+        std::cout << "Matrix Representation:\n";
+        matrixGraph->display();
+    }
+    if (listGraph) {
+        std::cout << "List Representation:\n";
+        listGraph->display();
+    }
+}
+
+void Application::runAlgorithms() {
     if (config.getProblemType() == MST) {
         if (config.isRunPrim()) {
             std::cout << "\n=== Prim's Algorithm ===\n";
             if (matrixGraph) {
-                std::cout << "Matrix Representation:\n";
-                runMSTPrim(matrixGraph);
+                std::cout << "Matrix:\n";
+                std::cout << "Time: " << runPrimMST(matrixGraph) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List Representation:\n";
-                runMSTPrim(listGraph);
+                std::cout << "List:\n";
+                std::cout << "Time: " << runPrimMST(listGraph) << " ms\n";
             }
         }
 
         if (config.isRunKruskal()) {
             std::cout << "\n=== Kruskal's Algorithm ===\n";
             if (matrixGraph) {
-                std::cout << "Matrix Representation:\n";
-                runMSTKruskal(matrixGraph);
+                std::cout << "Matrix:\n";
+                std::cout << "Time: " << runKruskalMST(matrixGraph) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List Representation:\n";
-                runMSTKruskal(listGraph);
+                std::cout << "List:\n";
+                std::cout << "Time: " << runKruskalMST(listGraph) << " ms\n";
             }
         }
     } else if (config.getProblemType() == SP) {
@@ -85,69 +131,25 @@ void Application::run() {
         if (config.isRunDijkstra()) {
             std::cout << "\n=== Dijkstra's Algorithm ===\n";
             if (matrixGraph) {
-                std::cout << "Matrix Representation:\n";
-                runSPDijkstra(matrixGraph, src, dest);
+                std::cout << "Matrix:\n";
+                std::cout << "Time: " << runDijkstraSP(matrixGraph, src, dest) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List Representation:\n";
-                runSPDijkstra(listGraph, src, dest);
+                std::cout << "List:\n";
+                std::cout << "Time: " << runDijkstraSP(listGraph, src, dest) << " ms\n";
             }
         }
 
         if (config.isRunBellmanFord()) {
             std::cout << "\n=== Bellman-Ford Algorithm ===\n";
             if (matrixGraph) {
-                std::cout << "Matrix Representation:\n";
-                runSPBellmanFord(matrixGraph, src, dest);
+                std::cout << "Matrix:\n";
+                std::cout << "Time: " << runBellmanFordSP(matrixGraph, src, dest) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List Representation:\n";
-                runSPBellmanFord(listGraph, src, dest);
+                std::cout << "List:\n";
+                std::cout << "Time: " << runBellmanFordSP(listGraph, src, dest) << " ms\n";
             }
         }
     }
-
-    // 6. Testy wydajności, jeśli wymagane
-    if (config.isRunPerformanceTests()) {
-        std::cout << "\n=== Performance Tests ===\n";
-        runPerformanceTests();
-    }
-}
-
-// Przykładowe implementacje metod do wczytywania i generowania grafu
-
-bool Application::loadGraphFromFile(const char* filename) {
-    // Implementacja analogiczna do tej z main.cpp — wczytaj do matrixGraph i listGraph
-    // ...
-    return true;
-}
-
-bool Application::generateRandomGraph(int vertices, double density) {
-    // Implementacja analogiczna do generateConnectedGraph — dla matrixGraph i listGraph
-    // ...
-    return true;
-}
-
-void Application::runMSTPrim(Graph* graph) {
-    double time = runPrimMST(graph);
-    std::cout << "Execution Time: " << time << " ms\n";
-}
-
-void Application::runMSTKruskal(Graph* graph) {
-    double time = runKruskalMST(graph);
-    std::cout << "Execution Time: " << time << " ms\n";
-}
-
-void Application::runSPDijkstra(Graph* graph, int source, int destination) {
-    double time = runDijkstraSP(graph, source, destination);
-    std::cout << "Execution Time: " << time << " ms\n";
-}
-
-void Application::runSPBellmanFord(Graph* graph, int source, int destination) {
-    double time = runBellmanFordSP(graph, source, destination);
-    std::cout << "Execution Time: " << time << " ms\n";
-}
-
-void Application::runPerformanceTests() {
-    // Tutaj implementacja testów wydajnościowych
 }
