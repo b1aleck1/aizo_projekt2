@@ -4,6 +4,7 @@
 #include "../include/Dijkstra.h"
 #include "../include/BellmanFord.h"
 #include "../include/Timer.h"
+#include <iostream>
 
 double runPrimMST(Graph* graph) {
     Timer timer;
@@ -12,6 +13,7 @@ double runPrimMST(Graph* graph) {
     prim.run(graph);
     timer.stop();
     prim.displayResult();
+    std::cout << "Time: ";
     return timer.getElapsedTime();
 }
 
@@ -22,6 +24,7 @@ double runKruskalMST(Graph* graph) {
     kruskal.run(graph);
     timer.stop();
     kruskal.displayResult();
+    std::cout << "Time: ";
     return timer.getElapsedTime();
 }
 
@@ -32,8 +35,10 @@ double runDijkstraSP(Graph* graph, int source, int destination) {
     dijkstra.run(graph, source, destination);
     timer.stop();
     dijkstra.displayResult();
+    std::cout << "Time: ";
     return timer.getElapsedTime();
 }
+
 
 double runBellmanFordSP(Graph* graph, int source, int destination) {
     Timer timer;
@@ -42,5 +47,6 @@ double runBellmanFordSP(Graph* graph, int source, int destination) {
     bellman.run(graph, source, destination);
     timer.stop();
     bellman.displayResult();
+    std::cout << "Time: ";
     return timer.getElapsedTime();
 }

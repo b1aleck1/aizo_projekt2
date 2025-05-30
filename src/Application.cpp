@@ -154,10 +154,10 @@ void Application::runAlgorithms() {
         if (config.isRunPrim()) {
             std::cout << "\n--- Prim's Algorithm ---\n";
             if (matrixGraph) {
-                std::cout << "Matrix: Time: " << runPrimMST(matrixGraph) << " ms\n";
+                std::cout << "Matrix: " << runPrimMST(matrixGraph) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List: Time: " << runPrimMST(listGraph) << " ms\n";
+                std::cout << "List: " << runPrimMST(listGraph) << " ms\n";
             }
         } else {
             std::cout << "[INFO] Prim's Algorithm not enabled in config.\n";
@@ -166,10 +166,10 @@ void Application::runAlgorithms() {
         if (config.isRunKruskal()) {
             std::cout << "\n--- Kruskal's Algorithm ---\n";
             if (matrixGraph) {
-                std::cout << "Matrix: Time: " << runKruskalMST(matrixGraph) << " ms\n";
+                std::cout << "Matrix: " << runKruskalMST(matrixGraph) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List: Time: " << runKruskalMST(listGraph) << " ms\n";
+                std::cout << "List: " << runKruskalMST(listGraph) << " ms\n";
             }
         } else {
             std::cout << "[INFO] Kruskal's Algorithm not enabled in config.\n";
@@ -182,10 +182,10 @@ void Application::runAlgorithms() {
         if (config.isRunDijkstra()) {
             std::cout << "\n--- Dijkstra's Algorithm ---\n";
             if (matrixGraph) {
-                std::cout << "Matrix: Time: " << runDijkstraSP(matrixGraph, src, dest) << " ms\n";
+                std::cout << "Matrix: " << runDijkstraSP(matrixGraph, src, dest) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List: Time: " << runDijkstraSP(listGraph, src, dest) << " ms\n";
+                std::cout << "List: " << runDijkstraSP(listGraph, src, dest) << " ms\n";
             }
         } else {
             std::cout << "[INFO] Dijkstra's Algorithm not enabled in config.\n";
@@ -194,10 +194,10 @@ void Application::runAlgorithms() {
         if (config.isRunBellmanFord()) {
             std::cout << "\n--- Bellman-Ford Algorithm ---\n";
             if (matrixGraph) {
-                std::cout << "Matrix: Time: " << runBellmanFordSP(matrixGraph, src, dest) << " ms\n";
+                std::cout << "Matrix: " << runBellmanFordSP(matrixGraph, src, dest) << " ms\n";
             }
             if (listGraph) {
-                std::cout << "List: Time: " << runBellmanFordSP(listGraph, src, dest) << " ms\n";
+                std::cout << "List: " << runBellmanFordSP(listGraph, src, dest) << " ms\n";
             }
         } else {
             std::cout << "[INFO] Bellman-Ford Algorithm not enabled in config.\n";
