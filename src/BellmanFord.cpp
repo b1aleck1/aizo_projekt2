@@ -1,38 +1,67 @@
 #include "../include/BellmanFord.h"
 #include <climits>
+#include <iostream>
+
+int* BellmanFord::distances = nullptr;
+int* BellmanFord::previous = nullptr;
+int BellmanFord::vertexCount = 0;
+int BellmanFord::start = -1;
+int BellmanFord::end = -1;
 
 void BellmanFord::run(Graph* graph, int startVertex, int endVertex) {
-    int V = graph->getVertexCount();
-    int* dist = new int[V];
+    start = startVertex;
+    end = endVertex;
+    vertexCount = graph->getVertexCount();
 
-    for (int i = 0; i < V; i++)
+    int* dist = new int[vertexCount];
+    int* prev = new int[vertexCount];
+
+    for (int i = 0; i < vertexCount; i++) {
         dist[i] = INT_MAX;
+        prev[i] = -1;
+    }
 
-    dist[startVertex] = 0;
+    dist[start] = 0;
 
-    for (int i = 1; i < V; i++) {
-        for (int u = 0; u < V; u++) {
-            for (int v = 0; v < V; v++) {
+    for (int i = 0; i < vertexCount - 1; i++) {
+        for (int u = 0; u < vertexCount; u++) {
+            for (int v = 0; v < vertexCount; v++) {
                 int weight = graph->getEdgeWeight(u, v);
-                if (weight != 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v])
+                if (weight > 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
                     dist[v] = dist[u] + weight;
+                    prev[v] = u;
+                }
             }
         }
     }
 
-    for (int u = 0; u < V; u++) {
-        for (int v = 0; v < V; v++) {
-            int weight = graph->getEdgeWeight(u, v);
-            if (weight != 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
-                delete[] dist;
-                return;
-            }
-        }
-    }
-
-    delete[] dist;
+    distances = dist;
+    previous = prev;
 }
 
 void BellmanFord::displayResult() const {
-    // Optional
+    std::cout << "Shortest path from " << start << " to " << end << ": ";
+    if (distances[end] == INT_MAX) {
+        std::cout << "NO PATH\n";
+        return;
+    }
+
+    std::cout << distances[end] << "\nPath: ";
+
+    int* path = new int[vertexCount];
+    int temp = end;
+    int length = 0;
+
+    while (temp != -1) {
+        path[length++] = temp;
+        temp = previous[temp];
+    }
+
+    for (int i = length - 1; i >= 0; i--) {
+        std::cout << path[i];
+        if (i > 0) std::cout << " -> ";
+    }
+    std::cout << "\n";
+
+    delete[] path;
 }

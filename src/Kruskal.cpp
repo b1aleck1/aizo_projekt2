@@ -1,8 +1,5 @@
 #include "../include/Kruskal.h"
-
-struct Edge {
-    int src, dest, weight;
-};
+#include <iostream>
 
 struct Subset {
     int parent, rank;
@@ -26,6 +23,10 @@ static void unite(Subset subsets[], int x, int y) {
         subsets[xroot].rank++;
     }
 }
+
+Edge* Kruskal::mst = nullptr;
+int Kruskal::mstSize = 0;
+int Kruskal::totalWeight = 0;
 
 void Kruskal::run(Graph* graph) {
     int V = graph->getVertexCount();
@@ -58,23 +59,35 @@ void Kruskal::run(Graph* graph) {
         subsets[v].rank = 0;
     }
 
-    int mstEdges = 0;
-    for (int i = 0; i < edgeIndex && mstEdges < V - 1; ++i) {
+    Edge* result = new Edge[V - 1];
+    int e = 0;
+
+    for (int i = 0; i < edgeIndex && e < V - 1; ++i) {
         int u = edges[i].src;
         int v = edges[i].dest;
         int set_u = find(subsets, u);
         int set_v = find(subsets, v);
 
         if (set_u != set_v) {
+            result[e++] = edges[i];
             unite(subsets, set_u, set_v);
-            ++mstEdges;
         }
     }
+
+    mst = result;
+    mstSize = e;
+    totalWeight = 0;
+    for (int i = 0; i < e; i++)
+        totalWeight += mst[i].weight;
 
     delete[] edges;
     delete[] subsets;
 }
 
 void Kruskal::displayResult() const {
-    // Optional
+    std::cout << "Edges MST (Kruskal):\n";
+    for (int i = 0; i < mstSize; i++) {
+        std::cout << mst[i].src << " - " << mst[i].dest << " (" << mst[i].weight << ")\n";
+    }
+    std::cout << "Total cost: " << totalWeight << "\n";
 }

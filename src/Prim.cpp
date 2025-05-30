@@ -1,23 +1,28 @@
 #include "../include/Prim.h"
 #include <climits>
+#include <iostream>
+
+int* Prim::mstParent = nullptr;
+int Prim::totalWeight = 0;
+int Prim::vertexCount = 0;
 
 void Prim::run(Graph* graph) {
-    int V = graph->getVertexCount();
-    int* parent = new int[V];
-    int* key = new int[V];
-    bool* mstSet = new bool[V];
+    vertexCount = graph->getVertexCount();
+    int* key = new int[vertexCount];
+    bool* mstSet = new bool[vertexCount];
+    int* parent = new int[vertexCount];
 
-    for (int i = 0; i < V; i++) {
+    for (int i = 0; i < vertexCount; i++) {
         key[i] = INT_MAX;
         mstSet[i] = false;
+        parent[i] = -1;
     }
 
     key[0] = 0;
-    parent[0] = -1;
 
-    for (int count = 0; count < V - 1; count++) {
-        int min = INT_MAX, u = -1;
-        for (int v = 0; v < V; v++)
+    for (int count = 0; count < vertexCount - 1; count++) {
+        int u = -1, min = INT_MAX;
+        for (int v = 0; v < vertexCount; v++)
             if (!mstSet[v] && key[v] < min) {
                 min = key[v];
                 u = v;
@@ -25,7 +30,7 @@ void Prim::run(Graph* graph) {
 
         mstSet[u] = true;
 
-        for (int v = 0; v < V; v++) {
+        for (int v = 0; v < vertexCount; v++) {
             int weight = graph->getEdgeWeight(u, v);
             if (weight > 0 && !mstSet[v] && weight < key[v]) {
                 parent[v] = u;
@@ -34,11 +39,20 @@ void Prim::run(Graph* graph) {
         }
     }
 
-    delete[] parent;
+    totalWeight = 0;
+    for (int i = 1; i < vertexCount; i++) {
+        totalWeight += graph->getEdgeWeight(parent[i], i);
+    }
+
+    mstParent = parent;
     delete[] key;
     delete[] mstSet;
 }
 
 void Prim::displayResult() const {
-    // Optional
+    std::cout << "Edges MST (Prim):\n";
+    for (int i = 1; i < vertexCount; i++) {
+        std::cout << mstParent[i] << " - " << i << "\n";
+    }
+    std::cout << "Total cost: " << totalWeight << "\n";
 }

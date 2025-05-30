@@ -11,6 +11,7 @@ double runPrimMST(Graph* graph) {
     timer.start();
     prim.run(graph);
     timer.stop();
+    prim.displayResult();  // <--- DODAJ TO
     return timer.getElapsedTime();
 }
 
@@ -20,6 +21,7 @@ double runKruskalMST(Graph* graph) {
     timer.start();
     kruskal.run(graph);
     timer.stop();
+    kruskal.displayResult();  // <--- DODAJ TO
     return timer.getElapsedTime();
 }
 
@@ -29,6 +31,7 @@ double runDijkstraSP(Graph* graph, int source, int destination) {
     timer.start();
     dijkstra.run(graph, source, destination);
     timer.stop();
+    dijkstra.displayResult();  // <--- DODAJ TO
     return timer.getElapsedTime();
 }
 
@@ -38,5 +41,6 @@ double runBellmanFordSP(Graph* graph, int source, int destination) {
     timer.start();
     bellman.run(graph, source, destination);
     timer.stop();
+    bellman.displayResult();  // <--- DODAJ TO
     return timer.getElapsedTime();
 }
