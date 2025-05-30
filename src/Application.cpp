@@ -2,9 +2,9 @@
 #include "../include/Timer.h"
 #include <iostream>
 #include <fstream>
-#include <string> // Dodano dla std::string
+#include <string>
 
-// External algorithm implementations
+
 extern double runPrimMST(Graph* graph);
 extern double runKruskalMST(Graph* graph);
 extern double runDijkstraSP(Graph* graph, int src, int dest);
