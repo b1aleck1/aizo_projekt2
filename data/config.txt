@@ -1,7 +1,7 @@
 # Configuration File
 
 # Problem Selection: MST or SP
-Problem: MST
+Problem: SP
 
 # Graph Input
 # LoadFromFile: "" # Leave empty "" to generate a random graph
@@ -13,10 +13,10 @@ Vertices: 10
 Density: 0.5
 
 # Algorithms to Run (true/false)
-RunPrim: true
-RunKruskal: true
-RunDijkstra: false
-RunBellmanFord: false
+RunPrim: false
+RunKruskal: false
+RunDijkstra: true
+RunBellmanFord: true
 
 # Graph Representation (true/false for using the representation)
 UseMatrix: true
