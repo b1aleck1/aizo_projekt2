@@ -89,5 +89,5 @@ void Kruskal::displayResult() const {
     for (int i = 0; i < mstSize; i++) {
         std::cout << mst[i].src << " - " << mst[i].dest << " (" << mst[i].weight << ")\n";
     }
-    std::cout << "Total cost: " << totalWeight << "\n";
+    std::cout << "Total MST cost: " << totalWeight << "\n";
 }

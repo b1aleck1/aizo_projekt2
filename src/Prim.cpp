@@ -54,5 +54,5 @@ void Prim::displayResult() const {
     for (int i = 1; i < vertexCount; i++) {
         std::cout << mstParent[i] << " - " << i << "\n";
     }
-    std::cout << "Total cost: " << totalWeight << "\n";
+    std::cout << "Total MST cost: " << totalWeight << "\n";
 }
