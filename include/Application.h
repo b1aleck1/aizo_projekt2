@@ -5,10 +5,6 @@
 #include "ListGraph.h"
 
 class Application {
-private:
-    Config config;
-    MatrixGraph* matrixGraph;
-    ListGraph* listGraph;
 
 public:
     Application();
@@ -16,8 +12,13 @@ public:
     void run();
 
 private:
+    Config config;
+    MatrixGraph* matrixGraph;
+    ListGraph* listGraph;
+
     bool loadGraphFromFile(const std::string& filename);
     void generateGraph();
     void runAlgorithms();
+    void runPerformanceTests();
     void displayGraphs();
 };

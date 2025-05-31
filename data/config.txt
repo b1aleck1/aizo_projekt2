@@ -26,7 +26,7 @@ UseList: true
 DisplayGraph: true
 
 # Run Performance Tests (true/false)
-RunPerformanceTests: false
+RunPerformanceTests: true
 
 # Shortest Path Parameters (if Problem is SP)
 Source: 0
