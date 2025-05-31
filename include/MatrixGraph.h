@@ -3,9 +3,17 @@
 
 #include "Graph.h"
 
+struct IncidenceEdge {
+    int from;
+    int to;
+    int weight;
+};
+
 class MatrixGraph : public Graph {
 private:
-    int** adjMatrix; // Dynamically allocated matrix
+    int** incMatrix;         // [vertexCount][edgeCount]
+    IncidenceEdge* edges;    // tablica krawędzi (from, to, weight)
+    int maxEdges;            // maksymalna liczba krawędzi (dla alokacji)
 
 public:
     MatrixGraph(int vertices, bool isDirected = false);
