@@ -2,7 +2,6 @@
 #define DIJKSTRA_H
 
 #include "Graph.h"
-#include <climits>
 
 class Dijkstra {
 private:
