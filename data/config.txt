@@ -4,9 +4,9 @@
 Problem: MST
 
 # Graph Input
-# LoadFromFile: "" # Leave empty "" to generate a random graph
-LoadFromFile: "data/graph.txt"
-# Ścieżka do pliku grafu, względna względem katalogu roboczego (projekt2/)
+# Leave empty to generate a random graph
+LoadFromFile:
+# Ścieżka do pliku grafu, względna względem katalogu roboczego (projekt2/), np. data/graph.txt
 
 # Random Graph Parameters (if LoadFromFile is empty)
 Vertices: 10
