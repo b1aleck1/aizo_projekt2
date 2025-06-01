@@ -1,5 +1,4 @@
 #include "../include/Application.h"
-#include "../include/Timer.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -238,11 +237,7 @@ void Application::runPerformanceTests() {
     int currentStep = 0;
     int lastPercent = -1;
 
-    // --- PRZYWRÓĆ std::cout PRZED WYPISANIEM POSTĘPU ---
-    std::cout.rdbuf(orig_buf);
     std::cout << "\n[INFO] Running performance tests... 0%";
-    std::cout.rdbuf(null_stream.rdbuf());
-    // -------------------------------------------------
 
     for (int problemType = 0; problemType <= 1; ++problemType) {
         for (int i = 0; i < (int)(sizeof(vertexCounts) / sizeof(vertexCounts[0])); ++i) {
@@ -314,12 +309,8 @@ void Application::runPerformanceTests() {
         }
     }
 
-    // --- PRZYWRÓĆ std::cout NA KONIEC ---
-    std::cout.rdbuf(orig_buf);
     std::cout << "\r[INFO] Running performance tests... 100%\n";
     outFile.close();
     std::cout << "[INFO] Performance results saved to 'performance_results.csv'.\n";
-    null_stream.close();
-    // ------------------------------------
 }
 
