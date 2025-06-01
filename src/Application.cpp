@@ -218,6 +218,8 @@ void Application::runAlgorithms() {
 
 void Application::runPerformanceTests() {
 
+    // Wyłączenie wyświetlania grafów w tym trybie,
+    // gdy nie zrobiono tego w pliku konfiguracyjnym.
     std::streambuf* orig_buf = std::cout.rdbuf();
 #ifdef _WIN64
     std::ofstream null_stream("nul");
@@ -231,7 +233,7 @@ void Application::runPerformanceTests() {
 
     int vertexCounts[] = {5, 10, 15, 25, 50, 100, 200};
     double densities[] = {0.25, 0.50, 0.99};
-    int trials = 10;
+    int trials = 5;
 
     int totalSteps = 2 * 7 * 3 * 2 * trials; // problemType x vertexCounts x densities x repr x trials
     int currentStep = 0;
