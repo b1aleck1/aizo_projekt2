@@ -5,7 +5,7 @@ Problem: MST
 
 # Graph Input
 # Leave empty to generate a random graph
-LoadFromFile:
+LoadFromFile: data/graph.txt
 # Ścieżka do pliku grafu, względna względem katalogu roboczego (projekt2/), np. data/graph.txt
 
 # Random Graph Parameters (if LoadFromFile is empty)
@@ -26,7 +26,7 @@ UseList: true
 DisplayGraph: true
 
 # Run Performance Tests (true/false)
-RunPerformanceTests: true
+RunPerformanceTests: false
 
 # Shortest Path Parameters (if Problem is SP)
 Source: 0
