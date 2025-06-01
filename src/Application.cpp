@@ -220,13 +220,12 @@ void Application::runAlgorithms() {
 // === Zmieniona implementacja testów wydajnościowych ===
 // ===========================================================
 void Application::runPerformanceTests() {
-    // --- DODAJ TO NA POCZĄTKU ---
+
     std::streambuf* orig_buf = std::cout.rdbuf();
     std::ofstream null_stream("nul"); // Windows: "nul", Linux: "/dev/null"
     std::cout.rdbuf(null_stream.rdbuf());
-    // ----------------------------
 
-    std::ofstream outFile("performance_results.csv");
+    std::ofstream outFile("results/performance_results.csv");
     outFile << "TypGrafu,Reprezentacja,Wierzchołki,Gęstość,Algorytm,ŚredniCzas\n";
 
     int vertexCounts[] = {5, 10, 15, 25, 50, 100, 200};
@@ -236,8 +235,6 @@ void Application::runPerformanceTests() {
     int totalSteps = 2 * 7 * 3 * 2 * trials; // problemType x vertexCounts x densities x repr x trials
     int currentStep = 0;
     int lastPercent = -1;
-
-    std::cout << "\n[INFO] Running performance tests... 0%";
 
     for (int problemType = 0; problemType <= 1; ++problemType) {
         for (int i = 0; i < (int)(sizeof(vertexCounts) / sizeof(vertexCounts[0])); ++i) {
@@ -280,12 +277,10 @@ void Application::runPerformanceTests() {
                         currentStep++;
                         int percent = (currentStep * 100) / totalSteps;
                         if (percent % 5 == 0 && percent != lastPercent) {
-                            // --- PRZYWRÓĆ std::cout NA CZAS POSTĘPU ---
                             std::cout.rdbuf(orig_buf);
                             std::cout << "\r[INFO] Running performance tests... " << percent << "%";
                             std::cout.flush();
                             std::cout.rdbuf(null_stream.rdbuf());
-                            // -----------------------------------------
                             lastPercent = percent;
                         }
                     }
@@ -308,9 +303,11 @@ void Application::runPerformanceTests() {
             }
         }
     }
-
+    std::cout.rdbuf(orig_buf);
     std::cout << "\r[INFO] Running performance tests... 100%\n";
+    outFile.flush();
     outFile.close();
-    std::cout << "[INFO] Performance results saved to 'performance_results.csv'.\n";
+    std::cout << "[INFO] Performance results saved to 'results/performance_results.csv'.\n";
+    null_stream.close();
 }
 
