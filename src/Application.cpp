@@ -216,13 +216,14 @@ void Application::runAlgorithms() {
     }
 }
 
-// ===========================================================
-// === Zmieniona implementacja testów wydajnościowych ===
-// ===========================================================
 void Application::runPerformanceTests() {
 
     std::streambuf* orig_buf = std::cout.rdbuf();
-    std::ofstream null_stream("nul"); // Windows: "nul", Linux: "/dev/null"
+#ifdef _WIN64
+    std::ofstream null_stream("nul");
+#else
+    std::ofstream null_stream("/dev/null");
+#endif // Windows: "nul", Linux: "/dev/null"
     std::cout.rdbuf(null_stream.rdbuf());
 
     std::ofstream outFile("results/performance_results.csv");
