@@ -1,32 +1,32 @@
 #include "../include/Graph.h"
-#include <stdlib.h> // For rand()
-#include <time.h>   // For time()
+#include <stdlib.h>
+#include <time.h>
 
-// Generate a random connected graph with specified number of vertices and density
+// Generowanie losowego spójnego grafu z określoną liczbą wierzchołków i gęstością
 void generateConnectedGraph(Graph* graph, int vertices, double density) {
-    // First create a spanning tree to ensure connectivity
-    // Then add random edges to achieve desired density
+    // Najpierw tworzony jest rozpinający graf (drzewo), aby zapewnić spójność
+    // Następnie dodawane są losowe krawędzie, by osiągnąć zadaną gęstość
 
-    // Initialize with random seed
+    // Inicjalizacja generatora liczb losowych
     srand(time(NULL));
 
-    // Generate a spanning tree
+    // Generowanie drzewa rozpinającego
     bool* visited = new bool[vertices];
     for (int i = 0; i < vertices; i++) {
         visited[i] = false;
     }
 
-    // Start with vertex 0
+    // Start od wierzchołka 0
     visited[0] = true;
     int visitedCount = 1;
 
-    // Add edges to form a spanning tree
+    // Dodawanie krawędzi tworzących drzewo rozpinające
     while (visitedCount < vertices) {
         int u = rand() % vertices;
         int v = rand() % vertices;
 
         if (visited[u] && !visited[v]) {
-            graph->addEdge(u, v, rand() % 100 + 1); // Weight between 1-100
+            graph->addEdge(u, v, rand() % 100 + 1); // Waga z zakresu 1–100
             visited[v] = true;
             visitedCount++;
         } else if (visited[v] && !visited[u]) {
@@ -38,13 +38,13 @@ void generateConnectedGraph(Graph* graph, int vertices, double density) {
 
     delete[] visited;
 
-    // Calculate max edges for the given graph type
+    // Obliczenie maksymalnej liczby krawędzi dla danego typu grafu
     int maxEdges = graph->isDirected() ? vertices * (vertices - 1) : vertices * (vertices - 1) / 2;
 
-    // Calculate target number of edges based on density
+    // Obliczenie docelowej liczby krawędzi na podstawie gęstości
     int targetEdges = (int)(maxEdges * density);
 
-    // Add random edges until desired density is reached
+    // Dodawanie losowych krawędzi aż do osiągnięcia zadanej gęstości
     while (graph->getEdgeCount() < targetEdges) {
         int u = rand() % vertices;
         int v = rand() % vertices;

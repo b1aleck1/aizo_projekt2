@@ -13,11 +13,11 @@ private:
     int totalCost;
 
 public:
-    Prim();                          // Domyślny konstruktor
+    Prim();
     ~Prim();
 
-    void run(Graph* graph);          // Główna funkcja uruchamiająca algorytm
-    void displayResult() const;      // Wyświetlenie wyniku
+    void run(Graph* graph);
+    void displayResult() const;
 };
 
 #endif // PRIM_H
