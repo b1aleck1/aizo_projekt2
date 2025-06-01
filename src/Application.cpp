@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem> // Dodane do obsługi folderu results
+#include <filesystem>
 
 // Deklaracje zewnętrznych funkcji (algorytmów i generatora):
 extern double runPrimMST(Graph* graph);
@@ -25,7 +25,11 @@ void Application::run() {
     if (!config.loadConfigFromFile("./data/config.txt")) {
         std::cerr << "Error loading configuration file. Using default values.\n";
     }
-
+    if (config.isRunPerformanceTests()) {
+        std::cout << "\n=== Performance Tests ===\n";
+        runPerformanceTests();
+        return;
+    }
     // --- Debug: wypisanie załadowanych opcji ---
     std::cout << "\n=== Configuration Loaded ===\n";
     std::cout << "[DEBUG] Problem Type: "
@@ -217,22 +221,28 @@ void Application::runAlgorithms() {
 // === Zmieniona implementacja testów wydajnościowych ===
 // ===========================================================
 void Application::runPerformanceTests() {
-    // Tworzenie folderu results, jeśli nie istnieje
-    std::filesystem::create_directories("./results");
+    // --- DODAJ TO NA POCZĄTKU ---
+    std::streambuf* orig_buf = std::cout.rdbuf();
+    std::ofstream null_stream("nul"); // Windows: "nul", Linux: "/dev/null"
+    std::cout.rdbuf(null_stream.rdbuf());
+    // ----------------------------
 
-    std::ofstream outFile("./results/performance_results.csv");
+    std::ofstream outFile("performance_results.csv");
     outFile << "TypGrafu,Reprezentacja,Wierzchołki,Gęstość,Algorytm,ŚredniCzas\n";
 
-    int vertexCounts[] = {10, 50, 100, 200, 300, 400, 500};
+    int vertexCounts[] = {5, 10, 15, 25, 50, 100, 200};
     double densities[] = {0.25, 0.50, 0.99};
-    int trials = 3;
+    int trials = 10;
 
     int totalSteps = 2 * 7 * 3 * 2 * trials; // problemType x vertexCounts x densities x repr x trials
     int currentStep = 0;
     int lastPercent = -1;
 
-    std::cout << "[INFO] Rozpoczęto testy wydajnościowe...";
-    std::cout.flush();
+    // --- PRZYWRÓĆ std::cout PRZED WYPISANIEM POSTĘPU ---
+    std::cout.rdbuf(orig_buf);
+    std::cout << "\n[INFO] Running performance tests... 0%";
+    std::cout.rdbuf(null_stream.rdbuf());
+    // -------------------------------------------------
 
     for (int problemType = 0; problemType <= 1; ++problemType) {
         for (int i = 0; i < (int)(sizeof(vertexCounts) / sizeof(vertexCounts[0])); ++i) {
@@ -274,9 +284,13 @@ void Application::runPerformanceTests() {
 
                         currentStep++;
                         int percent = (currentStep * 100) / totalSteps;
-                        if (percent != lastPercent && percent % 5 == 0) {
-                            std::cout << "\r[INFO] Postęp: " << percent << "%  ";
+                        if (percent % 5 == 0 && percent != lastPercent) {
+                            // --- PRZYWRÓĆ std::cout NA CZAS POSTĘPU ---
+                            std::cout.rdbuf(orig_buf);
+                            std::cout << "\r[INFO] Running performance tests... " << percent << "%";
                             std::cout.flush();
+                            std::cout.rdbuf(null_stream.rdbuf());
+                            // -----------------------------------------
                             lastPercent = percent;
                         }
                     }
@@ -300,7 +314,12 @@ void Application::runPerformanceTests() {
         }
     }
 
-    std::cout << "\r[INFO] Testy zakończone (100%)      \n";
-    std::cout << "[INFO] Wyniki zapisano do: ./results/performance_results.csv\n";
+    // --- PRZYWRÓĆ std::cout NA KONIEC ---
+    std::cout.rdbuf(orig_buf);
+    std::cout << "\r[INFO] Running performance tests... 100%\n";
     outFile.close();
+    std::cout << "[INFO] Performance results saved to 'performance_results.csv'.\n";
+    null_stream.close();
+    // ------------------------------------
 }
+
