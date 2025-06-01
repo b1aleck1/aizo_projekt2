@@ -158,6 +158,39 @@ void MatrixGraph::display() const {
     }
 }
 
+int MatrixGraph::getNeighborCount(int vertex) const {
+    int count = 0;
+    for (int e = 0; e < edgeCount; ++e) {
+        if (directed) {
+            if (edges[e].from == vertex) count++;
+        } else {
+            if (edges[e].from == vertex || edges[e].to == vertex) count++;
+        }
+    }
+    return count;
+}
+
+int MatrixGraph::getNeighbor(int vertex, int index) const {
+    int count = 0;
+    for (int e = 0; e < edgeCount; ++e) {
+        if (directed) {
+            if (edges[e].from == vertex) {
+                if (count == index) return edges[e].to;
+                count++;
+            }
+        } else {
+            if (edges[e].from == vertex) {
+                if (count == index) return edges[e].to;
+                count++;
+            } else if (edges[e].to == vertex) {
+                if (count == index) return edges[e].from;
+                count++;
+            }
+        }
+    }
+    return -1; // Nie znaleziono
+}
+
 
 void MatrixGraph::clearGraph() {
     for (int i = 0; i < vertexCount; ++i) {

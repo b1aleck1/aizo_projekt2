@@ -1,5 +1,6 @@
 #include "../include/Prim.h"
 #include <iostream>
+#include <climits>
 
 Prim::Prim() : graph(nullptr), parent(nullptr), key(nullptr), inMST(nullptr), totalCost(0) {}
 
@@ -18,7 +19,7 @@ void Prim::run(Graph* graph) {
     inMST = new bool[V];
 
     for (int i = 0; i < V; ++i) {
-        key[i] = 1000000000;  // Duża liczba jako "nieskończoność"
+        key[i] = INT_MAX;
         inMST[i] = false;
         parent[i] = -1;
     }

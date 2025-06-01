@@ -25,6 +25,9 @@ public:
     int getEdgeWeight(int source, int destination) const override;
     void display() const override;
     void clearGraph() override;
+    int getNeighborCount(int vertex) const override;
+    int getNeighbor(int vertex, int index) const override;
+
 };
 
 #endif // MATRIX_GRAPH_H

@@ -92,6 +92,28 @@ void ListGraph::display() const {
     }
 }
 
+int ListGraph::getNeighborCount(int vertex) const {
+    int count = 0;
+    Node* current = adjList[vertex];
+    while (current) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+int ListGraph::getNeighbor(int vertex, int index) const {
+    int count = 0;
+    Node* current = adjList[vertex];
+    while (current) {
+        if (count == index) return current->vertex;
+        count++;
+        current = current->next;
+    }
+    return -1; // Nie znaleziono
+}
+
+
 void ListGraph::clearGraph() {
     for (int i = 0; i < vertexCount; ++i) {
         Node* curr = adjList[i];

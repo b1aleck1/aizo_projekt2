@@ -1,5 +1,6 @@
 #include "../include/Dijkstra.h"
 #include <iostream>
+#include <climits>
 
 int* Dijkstra::distances = nullptr;
 int* Dijkstra::previous = nullptr;
@@ -7,7 +8,7 @@ int Dijkstra::vertexCount = 0;
 int Dijkstra::start = -1;
 int Dijkstra::end = -1;
 
-// --- Implementacja MinHeap ---
+// --- MinHeap ---
 
 void Dijkstra::MinHeap::swap(int i, int j) {
     int temp = heap[i];
@@ -41,8 +42,7 @@ void Dijkstra::MinHeap::heapifyUp(int i) {
     }
 }
 
-Dijkstra::MinHeap::MinHeap(int capacity, int* dist)
-    : capacity(capacity), size(0), dist(dist) {
+Dijkstra::MinHeap::MinHeap(int cap, int* d) : capacity(cap), dist(d), size(0) {
     heap = new int[capacity];
     pos = new int[capacity];
     for (int i = 0; i < capacity; i++)
@@ -85,14 +85,14 @@ bool Dijkstra::MinHeap::contains(int v) const {
     return pos[v] != -1;
 }
 
-// --- Koniec implementacji MinHeap ---
+// --- Dijkstra ---
 
 Dijkstra::~Dijkstra() {
-    if (distances != nullptr) {
+    if (distances) {
         delete[] distances;
         distances = nullptr;
     }
-    if (previous != nullptr) {
+    if (previous) {
         delete[] previous;
         previous = nullptr;
     }
@@ -105,14 +105,12 @@ void Dijkstra::run(Graph* graph, int startVertex, int endVertex) {
 
     int* dist = new int[vertexCount];
     int* prev = new int[vertexCount];
-
     for (int i = 0; i < vertexCount; i++) {
         dist[i] = INT_MAX;
         prev[i] = -1;
     }
 
     dist[start] = 0;
-
     MinHeap minHeap(vertexCount, dist);
     for (int i = 0; i < vertexCount; i++)
         minHeap.insert(i);
@@ -121,8 +119,12 @@ void Dijkstra::run(Graph* graph, int startVertex, int endVertex) {
         int u = minHeap.extractMin();
         if (u == -1 || dist[u] == INT_MAX) break;
 
-        for (int v = 0; v < vertexCount; v++) {
+        // Użyj sąsiadów (dostosowane pod listę sąsiedztwa)
+        int neighborCount = graph->getNeighborCount(u);
+        for (int i = 0; i < neighborCount; i++) {
+            int v = graph->getNeighbor(u, i);
             int weight = graph->getEdgeWeight(u, v);
+
             if (weight > 0 && dist[u] + weight < dist[v]) {
                 dist[v] = dist[u] + weight;
                 prev[v] = u;
@@ -132,15 +134,15 @@ void Dijkstra::run(Graph* graph, int startVertex, int endVertex) {
         }
     }
 
-    if (distances != nullptr) delete[] distances;
-    if (previous != nullptr) delete[] previous;
+    if (distances) delete[] distances;
+    if (previous) delete[] previous;
     distances = dist;
     previous = prev;
 }
 
 void Dijkstra::displayResult() const {
     std::cout << "Shortest path from " << start << " to " << end << ": ";
-    if (distances == nullptr || distances[end] == INT_MAX) {
+    if (!distances || distances[end] == INT_MAX) {
         std::cout << "NO PATH\n";
         return;
     }
@@ -148,8 +150,7 @@ void Dijkstra::displayResult() const {
     std::cout << distances[end] << "\nPath: ";
 
     int* path = new int[vertexCount];
-    int temp = end;
-    int length = 0;
+    int temp = end, length = 0;
 
     while (temp != -1) {
         path[length++] = temp;
