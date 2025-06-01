@@ -27,10 +27,25 @@ void BellmanFord::run(Graph* graph, int startVertex, int endVertex) {
         for (int u = 0; u < vertexCount; u++) {
             for (int v = 0; v < vertexCount; v++) {
                 int weight = graph->getEdgeWeight(u, v);
-                if (weight > 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
+                if (weight != 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
                     dist[v] = dist[u] + weight;
                     prev[v] = u;
                 }
+            }
+        }
+    }
+
+    // Check for negative weight cycle
+    for (int u = 0; u < vertexCount; u++) {
+        for (int v = 0; v < vertexCount; v++) {
+            int weight = graph->getEdgeWeight(u, v);
+            if (weight != 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
+                std::cerr << "Graph contains a negative-weight cycle\n";
+                delete[] dist;
+                delete[] prev;
+                distances = nullptr;
+                previous = nullptr;
+                return;
             }
         }
     }
@@ -41,7 +56,7 @@ void BellmanFord::run(Graph* graph, int startVertex, int endVertex) {
 
 void BellmanFord::displayResult() const {
     std::cout << "Shortest path from " << start << " to " << end << ": ";
-    if (distances[end] == INT_MAX) {
+    if (distances == nullptr || distances[end] == INT_MAX) {
         std::cout << "NO PATH\n";
         return;
     }

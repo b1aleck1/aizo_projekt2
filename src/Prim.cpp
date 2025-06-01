@@ -1,58 +1,74 @@
 #include "../include/Prim.h"
-#include <climits>
 #include <iostream>
 
-int* Prim::mstParent = nullptr;
-int Prim::totalWeight = 0;
-int Prim::vertexCount = 0;
+Prim::Prim() : graph(nullptr), parent(nullptr), key(nullptr), inMST(nullptr), totalCost(0) {}
+
+Prim::~Prim() {
+    delete[] parent;
+    delete[] key;
+    delete[] inMST;
+}
 
 void Prim::run(Graph* graph) {
-    vertexCount = graph->getVertexCount();
-    int* key = new int[vertexCount];
-    bool* mstSet = new bool[vertexCount];
-    int* parent = new int[vertexCount];
+    this->graph = graph;
+    int V = graph->getVertexCount();
 
-    for (int i = 0; i < vertexCount; i++) {
-        key[i] = INT_MAX;
-        mstSet[i] = false;
+    parent = new int[V];
+    key = new int[V];
+    inMST = new bool[V];
+
+    for (int i = 0; i < V; ++i) {
+        key[i] = 1000000000;  // Duża liczba jako "nieskończoność"
+        inMST[i] = false;
         parent[i] = -1;
     }
 
     key[0] = 0;
+    MinHeap heap(V);
+    heap.insert(0, 0);
 
-    for (int count = 0; count < vertexCount - 1; count++) {
-        int u = -1, min = INT_MAX;
-        for (int v = 0; v < vertexCount; v++)
-            if (!mstSet[v] && key[v] < min) {
-                min = key[v];
-                u = v;
-            }
+    while (!heap.isEmpty()) {
+        VertexDistance* minNode = heap.extractMin();
+        int u = minNode->vertex;
+        delete minNode;
 
-        mstSet[u] = true;
+        if (inMST[u])
+            continue;
 
-        for (int v = 0; v < vertexCount; v++) {
-            int weight = graph->getEdgeWeight(u, v);
-            if (weight > 0 && !mstSet[v] && weight < key[v]) {
-                parent[v] = u;
-                key[v] = weight;
+        inMST[u] = true;
+
+        for (int v = 0; v < V; ++v) {
+            if (graph->hasEdge(u, v) && !inMST[v]) {
+                int weight = graph->getEdgeWeight(u, v);
+                if (weight < key[v]) {
+                    key[v] = weight;
+                    parent[v] = u;
+                    if (heap.isInHeap(v)) {
+                        heap.decreaseKey(v, weight);
+                    } else {
+                        heap.insert(v, weight);
+                    }
+                }
             }
         }
     }
 
-    totalWeight = 0;
-    for (int i = 1; i < vertexCount; i++) {
-        totalWeight += graph->getEdgeWeight(parent[i], i);
+    totalCost = 0;
+    for (int i = 1; i < V; ++i) {
+        if (parent[i] != -1) {
+            totalCost += graph->getEdgeWeight(i, parent[i]);
+        }
     }
-
-    mstParent = parent;
-    delete[] key;
-    delete[] mstSet;
 }
 
 void Prim::displayResult() const {
-    std::cout << "Edges MST (Prim):\n";
-    for (int i = 1; i < vertexCount; i++) {
-        std::cout << mstParent[i] << " - " << i << "\n";
+    int V = graph->getVertexCount();
+    std::cout << "MST (Prim):\n";
+    for (int i = 1; i < V; ++i) {
+        if (parent[i] != -1) {
+            std::cout << parent[i] << " - " << i
+                      << " (weight: " << graph->getEdgeWeight(i, parent[i]) << ")\n";
+        }
     }
-    std::cout << "Total MST cost: " << totalWeight << "\n";
+    std::cout << "Total cost: " << totalCost << "\n";
 }

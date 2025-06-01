@@ -1,9 +1,39 @@
 #include "../include/Kruskal.h"
 #include <iostream>
 
+// ===== STRUKTURA DO UNION-FIND =====
 struct Subset {
     int parent, rank;
 };
+
+// ===== WŁASNY QUICKSORT =====
+static void swap(Edge &a, Edge &b) {
+    Edge temp = a;
+    a = b;
+    b = temp;
+}
+
+static int partition(Edge arr[], int low, int high) {
+    int pivot = arr[high].weight;
+    int i = low - 1;
+    for (int j = low; j < high; ++j) {
+        if (arr[j].weight < pivot) {
+            ++i;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+static void quicksort(Edge arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quicksort(arr, low, pi - 1);
+        quicksort(arr, pi + 1, high);
+    }
+}
+// ============================
 
 static int find(Subset subsets[], int i) {
     if (subsets[i].parent != i)
@@ -24,10 +54,12 @@ static void unite(Subset subsets[], int x, int y) {
     }
 }
 
+// ===== STATYCZNE POLA =====
 Edge* Kruskal::mst = nullptr;
 int Kruskal::mstSize = 0;
 int Kruskal::totalWeight = 0;
 
+// ===== GŁÓWNA FUNKCJA ALGORYTMU KRUSKALA =====
 void Kruskal::run(Graph* graph) {
     int V = graph->getVertexCount();
     int E = graph->getEdgeCount();
@@ -43,15 +75,7 @@ void Kruskal::run(Graph* graph) {
         }
     }
 
-    for (int i = 0; i < edgeIndex - 1; i++) {
-        for (int j = 0; j < edgeIndex - i - 1; j++) {
-            if (edges[j].weight > edges[j + 1].weight) {
-                Edge temp = edges[j];
-                edges[j] = edges[j + 1];
-                edges[j + 1] = temp;
-            }
-        }
-    }
+    quicksort(edges, 0, edgeIndex - 1);
 
     Subset* subsets = new Subset[V];
     for (int v = 0; v < V; ++v) {
@@ -84,6 +108,7 @@ void Kruskal::run(Graph* graph) {
     delete[] subsets;
 }
 
+// ===== WYŚWIETLANIE WYNIKÓW MST =====
 void Kruskal::displayResult() const {
     std::cout << "Edges MST (Kruskal):\n";
     for (int i = 0; i < mstSize; i++) {
