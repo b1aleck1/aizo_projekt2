@@ -1,7 +1,7 @@
 # Configuration File
 
 # Problem Selection: MST or SP
-Problem: MST
+Problem: SP
 
 # Graph Input
 # Leave empty to generate a random graph
